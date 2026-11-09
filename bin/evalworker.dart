@@ -1,8 +1,10 @@
 // tinyeval worker: evals/support.sh starts it with `worker dart run bin/evalworker.dart`.
 // It reads each input up to a NUL byte on stdin, and prints the reply and a NUL byte.
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:support/support.dart';
 
 Future<void> main() async {
@@ -28,9 +30,16 @@ Future<String> reply(Support support, String input) async {
     final status = e.statusCode;
     if (status == 401 || status == 429 || status >= 500) return couldntRun(e);
     return 'error: $e'; // a 400 or 404 comes from the request the app built
-  } on Exception catch (e) {
-    return couldntRun(e); // no key, the network, a timeout or a broken response
+  } on NoKeyException catch (e) {
+    return couldntRun(e);
+  } on TimeoutException catch (e) {
+    return couldntRun(e);
+  } on http.ClientException catch (e) {
+    return couldntRun(e); // the network
+  } on SocketException catch (e) {
+    return couldntRun(e);
   }
+  // Any other exception is a bug in the app's code: the worker stops and the eval fails.
 }
 
 String couldntRun(Exception e) =>
