@@ -1,0 +1,9 @@
+name: support
+description: A web shop's support bot, with its tinyeval suite.
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  http: ^1.6.0
