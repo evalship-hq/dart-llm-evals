@@ -7,3 +7,6 @@ environment:
 
 dependencies:
   http: ^1.6.0
+
+dev_dependencies:
+  tinyeval: ^0.11.0

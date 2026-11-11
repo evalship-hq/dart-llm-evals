@@ -9,7 +9,7 @@ Clone this repo, or use it as a template. Then:
 ```sh
 dart pub get
 export ANTHROPIC_API_KEY=sk-ant-...
-./tinyeval
+dart run tinyeval
 ```
 
 ```
@@ -25,9 +25,8 @@ All 3 evals passed (eval-results.json)
 
 - `lib/support.dart`: the bot. `Support.answer(message)` sends the message to Claude and returns the reply. Dart has no official Anthropic SDK, so it calls the Messages API with `package:http`.
 - `prompts/support.md`: the system prompt.
-- `bin/evalworker.dart`: the tinyeval worker. It builds `Support` once, then answers each test case.
+- `bin/evalworker.dart`: the worker. It builds `Support` once, then passes it each test case with tinyeval's `worker` helper.
 - `evals/support.sh`: three test cases, checked with a regex, a model judge or both.
-- `tinyeval`: the eval runner, one bash file.
 - `.github/workflows/evals.yml`: runs the evals on every pull request and on pushes to main.
 
 ## Use it for your app
@@ -36,7 +35,7 @@ All 3 evals passed (eval-results.json)
 2. Write your test cases in `evals/`. The [check lines](https://github.com/evalship-hq/tinyeval#writing-evals) cover regexes, JSON, your own graders and a model judge.
 3. In a Flutter app, keep the AI call in plain Dart with no Flutter imports, in a file under `lib/` or in its own package. The worker then runs it with the Dart VM, without a device or emulator.
 
-When the API call fails for a reason that isn't your code, such as a missing key, a rate limit or a timeout, the worker replies `#tinyeval couldnt_run`. tinyeval then counts the test case as couldn't run, not as failed. Keep that split when you swap in your own client.
+When the API call fails for a reason that isn't your code, such as a missing key, a rate limit or a timeout, the worker throws `CouldntRun`. tinyeval then counts the test case as couldn't run, not as failed. Keep that split when you swap in your own client.
 
 ## In CI
 
@@ -45,6 +44,14 @@ Add `ANTHROPIC_API_KEY` as a repository secret under **Settings** > **Secrets an
 The workflow installs the packages, cached by `pubspec.lock`, then runs each test case 3 times. A test case passes when at least 2 of the 3 runs pass. A failing eval fails the job, so you can require it before merging. The results go up as the `eval-results` artifact, also when an eval fails.
 
 Without the secret, the workflow skips the evals and prints a notice. Pull requests from forks get no secrets, so their evals skip too.
+
+## Update tinyeval
+
+```sh
+dart pub upgrade --major-versions tinyeval
+```
+
+Dependabot opens a pull request each week when tinyeval, `http` or a GitHub action has a new version. Dependabot pull requests get no secrets, so their evals skip with the same notice.
 
 ## Compare pull requests with main
 

@@ -16,7 +16,7 @@ jobs:
           path: ~/.pub-cache
           key: pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
       - run: dart pub get && dart analyze
-      - run: ./tinyeval -n 3
+      - run: dart run tinyeval -n 3
         if: env.ANTHROPIC_API_KEY != ''
       - run: echo "::notice::Add the ANTHROPIC_API_KEY repository secret to run the evals."
         if: env.ANTHROPIC_API_KEY == ''

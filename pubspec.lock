@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.2"
+  tinyeval:
+    dependency: "direct dev"
+    description:
+      name: tinyeval
+      sha256: "0ddaff62d5f9e8a1d77546c630f47e09c4ccde188daef7ff39b8ba5ea25377a4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.11.0"
   typed_data:
     dependency: transitive
     description:
